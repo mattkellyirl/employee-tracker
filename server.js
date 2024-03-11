@@ -13,14 +13,46 @@ const prompts = [
 
 const menu = [
     {
-        type: 'list',
         name: 'menu',
+        type: 'list',
         message: 'Select Option',
         choices: prompts
     }
 ];
 
-function init() {
+const userResponse = (response) => {
+    const userRes = response.menu;
+    switch (userRes) {
+        case 'viewAllEmployees':
+            console.log('OK');
+            break;
+        case 'addNewEmployee':
+            console.log('OK');
+            break;
+        case 'updateEmployeeRole':
+            console.log('OK');
+            break;
+        case 'viewAllRoles':
+            console.log('OK');
+            break;
+        case 'addNewRole':
+            console.log('OK');
+            break;
+        case 'viewAllDepartments':
+            console.log('OK');
+            break;
+        case 'addNewDepartment':
+            console.log('OK');
+            break;
+        case 'exit':
+            console.log('OK');
+            process.exit();
+        default: 
+            console.log('Invalid Option')
+    };
+};
+
+const init = () => {
     console.log(`  
 
 
@@ -41,8 +73,7 @@ function init() {
 
    `)
     inquirer.prompt(menu)
-        .then((response) => {
-        });
+        .then(userResponse);
 };
 
 init();
