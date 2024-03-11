@@ -18,7 +18,7 @@ Manage your team more efficiently with this content management system built with
 To install this application, clone this repository to your local machine and install all relevant packages by executing "npm install". Please note, Node.js must be installed on your local machine for this application to run. 
 
 ## Usage
-To view a live demonstration of this application, please visit this [link](https://www.youtube.com/@mattkelly9107). To use this application on your local machine execute "node index.js" or "npm start" to start the application via your terminal. 
+To view a live demonstration of this application, please visit this [link](https://www.youtube.com/watch?v=Bd22ggWiFQI). To use this application on your local machine execute "node index.js" or "npm start" to start the application via your terminal. 
 
 Once the application is running, users can view the main menu for the database.
 
