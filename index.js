@@ -47,6 +47,7 @@ const menu = [
 const userResponse = (response) => {
     const userRes = response.menu;
     switch (userRes) {
+
         // View all employees
         case 'viewAllEmployees':
             db.query(`
@@ -69,14 +70,116 @@ const userResponse = (response) => {
             });            
             break;
 
+        // Add new employee
         case 'addNewEmployee':
-            console.log('OK');
-            promptUser();
+            const addEmployee = () => {
+                // Fetch roles from the database
+                db.query('SELECT id, title FROM role', (error, roles) => {
+                    if (error) {
+                        console.error('Error Fetching Roles', error);
+                        promptUser();
+                        return;
+                    }
+        
+                    inquirer.prompt([
+                        {
+                            name: 'firstName',
+                            type: 'input',
+                            message: 'Enter Employee\'s First Name:',
+
+                            // Validate that name is not empty and return error if necessary
+                            validate: (input) => {
+                                if (input.trim() !== '') {
+                                    return true;
+                                } else {
+                                    return 'Please enter a valid first name'
+                                }
+                            }
+                        },
+                        {
+                            name: 'lastName',
+                            type: 'input',
+                            message: 'Enter Employee\'s Last Name:',
+                            validate: (input) => {
+                                return input.trim() !== '' ? true : 'Please enter a valid last name';
+                            }
+                        },
+                        {
+                            name: 'role',
+                            type: 'list',
+                            message: 'Select Employee\'s Role:',
+                            choices: roles.map((role) => ({ name: role.title, value: role.id })),
+                        },
+                    ]).then((answers) => {
+                        const { firstName, lastName, role } = answers;
+        
+                        // Insert new employee into database
+                        db.query('INSERT INTO employee (first_name, last_name, role_id) VALUES (?, ?, ?)', [firstName, lastName, role], (error, results, fields) => {
+                            if (error) {
+                                console.error('Error adding new employee', error);
+                                addEmployee(); // Prompt the user again in case of error
+                            } else {
+                                console.log(`New employee "${firstName} ${lastName}" added successfully`);
+                                promptUser();
+                            };
+                        });
+                    });
+                });
+            };
+        
+            addEmployee();
             break;
 
+        // Update employee role
         case 'updateEmployeeRole':
-            console.log('OK');
-            promptUser();
+            const updateEmployeeRole = () => {
+                // Fetch employees and roles from database
+                db.query('SELECT id, CONCAT(first_name, " ", last_name) AS name FROM employee', (error, employees) => {
+                    if (error) {
+                        console.error('Error Fetching Employees', error);
+                        promptUser();
+                        return;
+                    }
+        
+                    db.query('SELECT id, title FROM role', (error, roles) => {
+                        if (error) {
+                            console.error('Error Fetching Roles', error);
+                            promptUser();
+                            return;
+                        }
+        
+                        inquirer.prompt([
+                            {
+                                name: 'employee',
+                                type: 'list',
+                                message: 'Select Employee to Update:',
+                                choices: employees.map((employee) => ({ name: employee.name, value: employee.id })),
+                            },
+                            {
+                                name: 'role',
+                                type: 'list',
+                                message: 'Select New Role:',
+                                choices: roles.map((role) => ({ name: role.title, value: role.id })),
+                            },
+                        ]).then((answers) => {
+                            const { employee, role } = answers;
+        
+                            // Update the employees role in the database
+                            db.query('UPDATE employee SET role_id = ? WHERE id = ?', [role, employee], (error, results, fields) => {
+                                if (error) {
+                                    console.error('Error updating employee role', error);
+                                    updateEmployeeRole(); // Prompt the user again in case of an error
+                                } else {
+                                    console.log('Employee role updated successfully');
+                                    promptUser();
+                                }
+                            });
+                        });
+                    });
+                });
+            };
+        
+            updateEmployeeRole();
             break;
 
         // View all roles
@@ -95,7 +198,8 @@ const userResponse = (response) => {
                     console.table(results);
                     promptUser();
                     };
-            });
+                }
+            );
             break;
 
         // Add new role
@@ -117,12 +221,12 @@ const userResponse = (response) => {
 
                             // Validate that role is not empty and return error if necessary
                             validate: (input) => {
-                            if (input.trim() !== '') {
-                                return true;
-                            } else {
-                                return 'Please enter a valid role'
-                            };
-                        }
+                                if (input.trim() !== '') {
+                                    return true;
+                                } else {
+                                    return 'Please enter a valid role'
+                                };
+                            }
                         },
                         {
                             name: 'salary',
@@ -131,13 +235,13 @@ const userResponse = (response) => {
 
                             // Validate that salary is not empty, is a number and returns error if necessary
                             validate: (input) => {
-                                const trimmedInput = input.trim();
-                            if (trimmedInput !== '' && !isNaN(trimmedInput)) {
-                                return true;
-                            } else {
-                                return 'Please enter a valid salary'
-                            };
-                        }
+                                    const trimmedInput = input.trim();
+                                if (trimmedInput !== '' && !isNaN(trimmedInput)) {
+                                    return true;
+                                } else {
+                                    return 'Please enter a valid salary'
+                                };
+                            }
                         },
                         {
                             name: 'department',
@@ -154,7 +258,7 @@ const userResponse = (response) => {
                                 console.error('Error adding new role', error);
                                 addRole(); // Prompt the user again in case of error
                             } else {
-                                console.log(`New role "${title}" added successfully!`);
+                                console.log(`New role "${title}" added successfully`);
                                 promptUser();
                             }
                         });
@@ -208,7 +312,7 @@ const userResponse = (response) => {
                             console.error('Error adding new department', error);
                             addDepartment(); // Prompt the user again in case of error
                         } else {
-                            console.log(`New department "${departmentName}" added successfully!`);
+                            console.log(`New department "${departmentName}" added successfully`);
                             promptUser();
                         }
                     });
