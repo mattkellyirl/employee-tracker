@@ -98,9 +98,71 @@ const userResponse = (response) => {
             });
             break;
 
+        // Add new role
         case 'addNewRole':
-            console.log('OK');
-            promptUser();
+            const addRole = () => {
+                // Fetch departments from database
+                db.query('SELECT id, name FROM department', (error, departments) => {
+                    if (error) {
+                        console.error('Error Fetching Departments', error);
+                        promptUser();
+                        return;
+                    }
+            
+                    inquirer.prompt([
+                        {
+                            name: 'title',
+                            type: 'input',
+                            message: 'Enter Role:',
+
+                            // Validate that role is not empty and return error if necessary
+                            validate: (input) => {
+                            if (input.trim() !== '') {
+                                return true;
+                            } else {
+                                return 'Please enter a valid role'
+                            };
+                        }
+                        },
+                        {
+                            name: 'salary',
+                            type: 'input',
+                            message: 'Enter Salary:',
+
+                            // Validate that salary is not empty, is a number and returns error if necessary
+                            validate: (input) => {
+                                const trimmedInput = input.trim();
+                            if (trimmedInput !== '' && !isNaN(trimmedInput)) {
+                                return true;
+                            } else {
+                                return 'Please enter a valid salary'
+                            };
+                        }
+                        },
+                        {
+                            name: 'department',
+                            type: 'list',
+                            message: 'Select Department:',
+                            choices: departments.map((department) => ({ name: department.name, value: department.id })),
+                        },
+                    ]).then((answers) => {
+                        const { title, salary, department } = answers;
+            
+                        // Insert the new role into the database
+                        db.query('INSERT INTO role (title, salary, department_id) VALUES (?, ?, ?)', [title, salary, department], (error, results, fields) => {
+                            if (error) {
+                                console.error('Error adding new role', error);
+                                addRole(); // Prompt the user again in case of error
+                            } else {
+                                console.log(`New role "${title}" added successfully!`);
+                                promptUser();
+                            }
+                        });
+                    });
+                });
+            };
+        
+            addRole();
             break;
 
         // View all departments
@@ -119,11 +181,44 @@ const userResponse = (response) => {
             });
             break;
 
+        // Add new department
         case 'addNewDepartment':
-            console.log('OK');
-            promptUser();
+            const addDepartment = () => {
+                inquirer.prompt([
+                    {
+                        name: 'departmentName',
+                        type: 'input',
+                        message: 'Enter Department Name:',
+                    
+                        // Validate that department name is not empty and return error if necessary
+                        validate: (input) => {
+                            if (input.trim() !== '') {
+                                return true;
+                            } else {
+                                return 'Please enter a valid department name'
+                            };
+                        }
+                    },
+                ]).then((answers) => {
+                    const departmentName = answers.departmentName;
+            
+                    // Insert the new department into the database
+                    db.query('INSERT INTO department (name) VALUES (?)', [departmentName], (error, results, fields) => {
+                        if (error) {
+                            console.error('Error adding new department', error);
+                            addDepartment(); // Prompt the user again in case of error
+                        } else {
+                            console.log(`New department "${departmentName}" added successfully!`);
+                            promptUser();
+                        }
+                    });
+                });
+            };
+
+            addDepartment();
             break;
 
+        // Exit application
         case 'exit':
             console.log('Disconnected from McLaren F1 Team Database');
             process.exit();
