@@ -18,5 +18,5 @@ VALUES  ('Lando', 'Norris', 1),
         ('Andrea', 'Stella', 2),
         ('Piers', 'Thynne', 3),
         ('Laura', 'Bowden', 4),
-        ('Pato', 'OWard', 5),
+        ('Pat', 'OWard', 5),
         ('Alex', 'Palou', 5);

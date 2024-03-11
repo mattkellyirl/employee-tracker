@@ -79,7 +79,7 @@ const userResponse = (response) => {
                         console.error('Error Fetching Roles', error);
                         promptUser();
                         return;
-                    }
+                    };
         
                     inquirer.prompt([
                         {
@@ -93,7 +93,7 @@ const userResponse = (response) => {
                                     return true;
                                 } else {
                                     return 'Please enter a valid first name'
-                                }
+                                };
                             }
                         },
                         {
@@ -139,14 +139,14 @@ const userResponse = (response) => {
                         console.error('Error Fetching Employees', error);
                         promptUser();
                         return;
-                    }
+                    };
         
                     db.query('SELECT id, title FROM role', (error, roles) => {
                         if (error) {
                             console.error('Error Fetching Roles', error);
                             promptUser();
                             return;
-                        }
+                        };
         
                         inquirer.prompt([
                             {
@@ -172,7 +172,7 @@ const userResponse = (response) => {
                                 } else {
                                     console.log('Employee role updated successfully');
                                     promptUser();
-                                }
+                                };
                             });
                         });
                     });
@@ -211,7 +211,7 @@ const userResponse = (response) => {
                         console.error('Error Fetching Departments', error);
                         promptUser();
                         return;
-                    }
+                    };
             
                     inquirer.prompt([
                         {
@@ -260,7 +260,7 @@ const userResponse = (response) => {
                             } else {
                                 console.log(`New role "${title}" added successfully`);
                                 promptUser();
-                            }
+                            };
                         });
                     });
                 });
@@ -314,7 +314,7 @@ const userResponse = (response) => {
                         } else {
                             console.log(`New department "${departmentName}" added successfully`);
                             promptUser();
-                        }
+                        };
                     });
                 });
             };
