@@ -1,4 +1,4 @@
-# Note Taker
+# Employee Tracker
 
 ![License](https://img.shields.io/badge/license-none-lightgrey.svg)
 
